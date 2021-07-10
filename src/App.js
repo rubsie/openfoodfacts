@@ -40,10 +40,11 @@ function PokemonSelector(props) {
 }
 
 async function fetchOnePokemon(id) {
+    console.log(`---fetch ${id} `)
     const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${id}`);
-    console.log(`fetch ${id} done`)
+    console.log(`---fetch ${id} done`)
     const data = await response.json();
-    console.log(`fetch ${id} data `, data.id)
+    console.log(`---fetch ${id} data `, data.id)
     return {
         id: data.id,
         name: data.name,
@@ -59,23 +60,30 @@ function App() {
 
     useEffect(() => {
         async function fetchPokemon() {
-            const fetchedData = await Promise.all(shownPokemonIds.map(id => fetchOnePokemon(id)));
+            const idsToFetch = shownPokemonIds.filter(id => !pokemons.find(p => p.id===id));
+            console.log(`fetchPokemon `, {idsToFetch});
+            if (!idsToFetch.length) return;
+
+            const fetchedData = await Promise.all(idsToFetch.map(id => fetchOnePokemon(id)));
             console.log({promises: fetchedData});
-            setPokemons(fetchedData);
+            setPokemons([...pokemons, ...fetchedData]);
         }
+
         fetchPokemon();
-    }, [shownPokemonIds]);
+    }, [shownPokemonIds, pokemons]);
 
     function addPokemon(id) {
         console.log(`add ${id}`);
         const idNumber = Number(id);
-        if (!shownPokemonIds.includes(idNumber)) setShownPokemonIds([...shownPokemonIds, idNumber].sort((a, b) => a - b));
+        if (!shownPokemonIds.includes(idNumber))
+            setShownPokemonIds([...shownPokemonIds, idNumber].sort((a, b) => a - b));
     }
 
     function removePokemon(id) {
         console.log(`remove ${id}`);
         const idNumber = Number(id);
-        if (shownPokemonIds.includes(idNumber)) setShownPokemonIds(shownPokemonIds.filter(i => i !== idNumber));
+        if (shownPokemonIds.includes(idNumber))
+            setShownPokemonIds(shownPokemonIds.filter(i => i !== idNumber));
     }
 
     console.log({pokemonIds: shownPokemonIds});
@@ -88,8 +96,11 @@ function App() {
                                       addPokemon={addPokemon}
                                       removePokemon={removePokemon}/></Row>
                 <Row><CardGroup>
-                    {pokemons.map(p => <Pokemon key={p.id} pokemon={p}
-                                                setSelectedPokemon={() => setSelectedPokemon(p)}/>)}
+                    {shownPokemonIds.map(id => {
+                        const pokemon = pokemons.find(p => p.id === id);
+                        return <Pokemon key={id} pokemon={pokemon}
+                                        setSelectedPokemon={() => setSelectedPokemon(pokemon)}/>
+                    })}
                 </CardGroup></Row>
             </Container></div>
     );
