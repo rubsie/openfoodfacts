@@ -53,33 +53,32 @@ async function fetchOnePokemon(id) {
 }
 
 function App() {
-    const [pokemonIds, setPokemonIds] = useState([202, 203, 205, 206, 207, 208, 209, 210]);
+    const [shownPokemonIds, setShownPokemonIds] = useState([202, 203, 205, 206, 207, 208, 209, 210]);
     const [pokemons, setPokemons] = useState([]);
     const [selectedPokemon, setSelectedPokemon] = useState();
 
     useEffect(() => {
         async function fetchPokemon() {
-            const fetchedData = await Promise.all(pokemonIds.map(id => fetchOnePokemon(id)));
+            const fetchedData = await Promise.all(shownPokemonIds.map(id => fetchOnePokemon(id)));
             console.log({promises: fetchedData});
             setPokemons(fetchedData);
         }
-
         fetchPokemon();
-    }, [pokemonIds]);
+    }, [shownPokemonIds]);
 
     function addPokemon(id) {
         console.log(`add ${id}`);
         const idNumber = Number(id);
-        if (!pokemonIds.includes(idNumber)) setPokemonIds([...pokemonIds, idNumber]) ;
+        if (!shownPokemonIds.includes(idNumber)) setShownPokemonIds([...shownPokemonIds, idNumber].sort((a, b) => a - b));
     }
 
     function removePokemon(id) {
         console.log(`remove ${id}`);
         const idNumber = Number(id);
-        if (pokemonIds.includes(idNumber)) setPokemonIds(pokemonIds.filter(i => i!==idNumber));
+        if (shownPokemonIds.includes(idNumber)) setShownPokemonIds(shownPokemonIds.filter(i => i !== idNumber));
     }
 
-    console.log({pokemonIds});
+    console.log({pokemonIds: shownPokemonIds});
     console.log({pokemons});
     if (!pokemons) return null;
     return (<div>
