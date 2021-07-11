@@ -6,10 +6,11 @@ import {ListAllPokemons} from "./components/listAllPokemons";
 import {fromLocalStorage, toLocalStorage} from "./utilities/localStorage";
 import {Pokemon} from "./components/pokemon";
 import {fetchOnePokemon} from "./utilities/fetch";
+import {ShownPokemonsProvider, useShownPokemonsContext} from "./contexts/shownPokemonsContext";
 
 
-function App() {
-    const [shownPokemonIds, setShownPokemonIds] = useState(() => fromLocalStorage());
+function ProvidedApp() {
+    const {shownPokemonIds, setShownPokemonIds} = useShownPokemonsContext();
     const [pokemons, setPokemons] = useState([]);
     const [clickedPokemon, setClickedPokemon] = useState();
 
@@ -63,6 +64,12 @@ function App() {
                 </Row>
             </Container></div>
     );
+}
+
+function App() {
+    return <ShownPokemonsProvider>
+        <ProvidedApp/>
+    </ShownPokemonsProvider>;
 }
 
 export default App;
