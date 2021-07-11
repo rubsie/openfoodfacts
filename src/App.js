@@ -20,9 +20,10 @@ function Pokemon(props) {
 
 
 function PokemonCompleteList(props) {
-    const {selectedPokemonId, addPokemon, removePokemon} = props;
+    const {selectedPokemonId, addPokemon, removePokemon, shownPokemonIds} = props;
     const [allPokemons, setAllPokemons] = useState([]);
     const [selectedPokemon, setSelectedPokemon] = useState();
+    const selectedPokemonIsInShownList = selectedPokemon && shownPokemonIds.find(id => id === selectedPokemon.id);
 
     const findPokemonWithId = useCallback((id) => {
         const pokemon = allPokemons.find(p => p.id === id);
@@ -72,9 +73,13 @@ function PokemonCompleteList(props) {
                 <Col xs={2}>
                     <ButtonGroup>
                         <Button variant="outline-primary"
+                                disabled={!selectedPokemonIsInShownList}
                                 onClick={() => removePokemon(selectedPokemon && selectedPokemon.id)}>-</Button>
+
                         <Button variant="outline-primary"
+                                disabled={!!selectedPokemonIsInShownList}
                                 onClick={() => addPokemon(selectedPokemon && selectedPokemon.id)}>+</Button>
+
                     </ButtonGroup>
                 </Col>
             </Row>
@@ -163,7 +168,8 @@ function App() {
                     <PokemonCompleteList
                         selectedPokemonId={clickedPokemon && clickedPokemon.id}
                         addPokemon={addPokemon}
-                        removePokemon={removePokemon}/>
+                        removePokemon={removePokemon}
+                        shownPokemonIds={shownPokemonIds}/>
                 </Row>
                 <Row>
                     {shownPokemonIds.map(id => {
