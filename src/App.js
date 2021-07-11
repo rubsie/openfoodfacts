@@ -20,21 +20,33 @@ function Pokemon(props) {
 
 
 function PokemonSelector(props) {
-    const {addPokemon, removePokemon} = props;
+    const {allPokemonIds, addPokemon, removePokemon} = props;
     const [id, setId] = useState("");
 
     console.log(`PokemonSelector ${id}`);
     return <Col>
         <Form className="p-3 bg-white">
-            <Form.Group controlId="id">
-                <Form.Label>number: </Form.Label>
-                <Form.Control value={id} type="number"
-                              onChange={e => setId(e.target.value)}/>
-            </Form.Group>
-            <ButtonGroup>
-                <Button variant="outline-primary" onClick={() => removePokemon(id)}>-</Button>
-                <Button variant="outline-primary" onClick={() => addPokemon(id)}>+</Button>
-            </ButtonGroup>
+            <Row className="d-flex align-items-end">
+                <Col xs={4}>
+                    <Form.Label>pokemon number: </Form.Label>
+                    <Form.Control value={id} type="number"
+                                  onChange={e => setId(e.target.value)}/>
+                </Col>
+                <Col xs={5}>
+                    <Form.Label>pokemon name: </Form.Label>
+                    <Form.Control value={id} list="pokemon" className="form-select"
+                                  onChange={e => setId(e.target.value)}/>
+                    <datalist id="pokemon">
+                        {allPokemonIds.map(p => <option value={p.id}>{p.name}</option>)}
+                    </datalist>
+                </Col>
+                <Col xs={2} >
+                    <ButtonGroup>
+                        <Button variant="outline-primary" onClick={() => removePokemon(id)}>-</Button>
+                        <Button variant="outline-primary" onClick={() => addPokemon(id)}>+</Button>
+                    </ButtonGroup>
+                </Col>
+            </Row>
         </Form>
     </Col>;
 }
@@ -53,6 +65,22 @@ async function fetchOnePokemon(id) {
     };
 }
 
+
+function getIdFromUrl(url) {
+    const urlParts = url.split("/");
+    return urlParts[urlParts.length - 2];
+
+}
+
+async function fetchAllPokemon() {
+    console.log(`---fetch all `)
+    const response = await fetch(`https://pokeapi.co/api/v2/pokemon?limit=-1`);
+    console.log(`---fetch all done`)
+    const data = await response.json();
+    console.log(`---fetch all data `, {data})
+    return data.results.map(p => ({id: getIdFromUrl(p.url), name: p.name}));
+}
+
 function fromLocalStorage() {
     return JSON.parse(localStorage.getItem("pokemonIds")) || [];
 }
@@ -62,24 +90,36 @@ function toLocalStorage(shownPokemonIds) {
 }
 
 function App() {
+
+    const [allPokemonIds, setAllPokemonIds] = useState([]);
     const [shownPokemonIds, setShownPokemonIds] = useState(() => fromLocalStorage());
     const [pokemons, setPokemons] = useState([]);
     const [selectedPokemon, setSelectedPokemon] = useState();
 
     useEffect(() => {
-        async function fetchPokemon() {
+        async function fetchShownPokemons() {
             toLocalStorage(shownPokemonIds);
             const idsToFetch = shownPokemonIds.filter(id => !pokemons.find(p => p.id === id));
             console.log(`fetchPokemon `, {idsToFetch});
             if (!idsToFetch.length) return;
 
             const fetchedData = await Promise.all(idsToFetch.map(id => fetchOnePokemon(id)));
-            console.log({promises: fetchedData});
+            console.log({fetchedData});
             setPokemons([...pokemons, ...fetchedData]);
         }
 
-        fetchPokemon();
+        fetchShownPokemons();
     }, [shownPokemonIds, pokemons]);
+
+    useEffect(() => {
+        async function fetchAllPokemons() {
+            const fetchedData = await fetchAllPokemon();
+            console.log({fetchedData});
+            setAllPokemonIds(fetchedData);
+        }
+
+        fetchAllPokemons();
+    }, []);
 
     function addPokemon(id) {
         console.log(`add ${id}`);
@@ -95,13 +135,15 @@ function App() {
             setShownPokemonIds(shownPokemonIds.filter(i => i !== idNumber));
     }
 
-    console.log({pokemonIds: shownPokemonIds});
+    console.log({allPokemonIds});
+    console.log({shownPokemonIds});
     console.log({pokemons});
     if (!pokemons) return null;
     return (<div>
             <Container fluid className="mt-3 mb-3">
                 <h1>My Pokemons</h1>
                 <Row><PokemonSelector selectedPokemon={selectedPokemon}
+                                      allPokemonIds={allPokemonIds}
                                       addPokemon={addPokemon}
                                       removePokemon={removePokemon}/></Row>
                 <Row>
