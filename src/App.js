@@ -21,42 +21,53 @@ function Pokemon(props) {
 
 function PokemonSelector(props) {
     const {addPokemon, removePokemon} = props;
-    const [allPokemonIds, setAllPokemonIds] = useState([]);
-    const [id, setId] = useState("");
+    const [allPokemons, setAllPokemons] = useState([]);
+    const [selectedPokemon, setSelectedPokemon] = useState();
+
 
     useEffect(() => {
         async function fetchAllPokemons() {
             const fetchedData = await fetchAllPokemon();
             console.log({fetchedData});
-            setAllPokemonIds(fetchedData);
+            setAllPokemons(fetchedData);
         }
 
         fetchAllPokemons();
     }, []);
 
-    console.log(`PokemonSelector ${id}`);
-    console.log({allPokemonIds});
+    function findPokemonWithId(id) {
+        return allPokemons.find(p => p.id === id);
+    }
+
+    function findPokemonWithName(name) {
+        return allPokemons.find(p => p.name === name);
+    }
+
+    console.log(`PokemonSelector ${selectedPokemon}`);
+    console.log({allPokemonIds: allPokemons});
 
     return <Col>
         <Form className="p-3 bg-white">
             <Row className="d-flex align-items-end">
                 <Col xs={3}>
                     <Form.Label>number: </Form.Label>
-                    <Form.Control value={id} type="number"
-                                  onChange={e => setId(e.target.value)}/>
+                    <Form.Control value={selectedPokemon && selectedPokemon.id} type="number"
+                                  onChange={e => setSelectedPokemon(findPokemonWithId(e.target.value))}/>
                 </Col>
                 <Col xs={6}>
                     <Form.Label>name: </Form.Label>
-                    <Form.Control value={id} list="pokemon" className="form-select"
-                                  onChange={e => setId(e.target.value)}/>
+                    <Form.Control value={selectedPokemon && selectedPokemon.name} list="pokemon" className="form-select"
+                                  onChange={e => setSelectedPokemon(findPokemonWithName(e.target.value))}/>
                     <datalist id="pokemon">
-                        {allPokemonIds.map(p => <option value={p.id}>{p.name}</option>)}
+                        {allPokemons.map(p => <option value={p.name}>{p.name}</option>)}
                     </datalist>
                 </Col>
                 <Col xs={2}>
                     <ButtonGroup>
-                        <Button variant="outline-primary" onClick={() => removePokemon(id)}>-</Button>
-                        <Button variant="outline-primary" onClick={() => addPokemon(id)}>+</Button>
+                        <Button variant="outline-primary"
+                                onClick={() => removePokemon(selectedPokemon && selectedPokemon.id)}>-</Button>
+                        <Button variant="outline-primary"
+                                onClick={() => addPokemon(selectedPokemon && selectedPokemon.id)}>+</Button>
                     </ButtonGroup>
                 </Col>
             </Row>
@@ -106,7 +117,6 @@ function App() {
 
     const [shownPokemonIds, setShownPokemonIds] = useState(() => fromLocalStorage());
     const [pokemons, setPokemons] = useState([]);
-    const [selectedPokemon, setSelectedPokemon] = useState();
 
     useEffect(() => {
         async function fetchShownPokemons() {
@@ -144,14 +154,12 @@ function App() {
     return (<div>
             <Container fluid className="mt-3 mb-3">
                 <h1>My Pokemons</h1>
-                <Row><PokemonSelector selectedPokemon={selectedPokemon}
-                                      addPokemon={addPokemon}
+                <Row><PokemonSelector addPokemon={addPokemon}
                                       removePokemon={removePokemon}/></Row>
                 <Row>
                     {shownPokemonIds.map(id => {
                         const pokemon = pokemons.find(p => p.id === id);
-                        return <Pokemon key={id} pokemon={pokemon}
-                                        setSelectedPokemon={() => setSelectedPokemon(pokemon)}/>
+                        return <Pokemon key={id} pokemon={pokemon}/>
                     })}
                 </Row>
             </Container></div>
