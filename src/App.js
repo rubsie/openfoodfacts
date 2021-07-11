@@ -8,18 +8,14 @@ import {ShownPokemonsProvider, useShownPokemonsContext} from "./contexts/shownPo
 
 
 function ProvidedApp() {
-    const {shownPokemonIds, shownPokemonsData, addPokemon, removePokemon} = useShownPokemonsContext();
+    const {shownPokemonIds, shownPokemonsData} = useShownPokemonsContext();
     const [clickedPokemon, setClickedPokemon] = useState();
 
     return (<div>
             <Container fluid className="mt-3 mb-3">
                 <h1>My Pokemons</h1>
                 <Row>
-                    <ListAllPokemons
-                        selectedPokemonId={clickedPokemon && clickedPokemon.id}
-                        addPokemon={addPokemon}
-                        removePokemon={removePokemon}
-                        shownPokemonIds={shownPokemonIds}/>
+                    <ListAllPokemons selectedPokemonId={clickedPokemon && clickedPokemon.id}/>
                 </Row>
                 <Row>
                     {shownPokemonIds.map(id => {
