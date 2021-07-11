@@ -1,6 +1,6 @@
 import 'bootstrap/dist/css/bootstrap.css';
 import './App.css';
-import {useEffect, useState} from "react";
+import {useCallback, useEffect, useState} from "react";
 import {Button, ButtonGroup, Card, Col, Container, Form, Row} from "react-bootstrap";
 
 function Pokemon(props) {
@@ -19,11 +19,26 @@ function Pokemon(props) {
 }
 
 
-function PokemonSelector(props) {
-    const {addPokemon, removePokemon} = props;
+function PokemonCompleteList(props) {
+    const {selectedPokemonId, addPokemon, removePokemon} = props;
     const [allPokemons, setAllPokemons] = useState([]);
     const [selectedPokemon, setSelectedPokemon] = useState();
 
+    const findPokemonWithId = useCallback((id) => {
+        const pokemon = allPokemons.find(p => p.id === id);
+        console.log({allPokemons});
+        console.log({pokemon});
+        return pokemon;
+    }, [allPokemons]);
+
+    const findPokemonWithName = useCallback((name) => {
+        return allPokemons.find(p => p.name === name);
+    }, [allPokemons])
+
+    useEffect(() => {
+        console.log(`useEffect in PokemonCompleteList ${selectedPokemonId}`);
+        setSelectedPokemon(findPokemonWithId(selectedPokemonId));
+    }, [selectedPokemonId, findPokemonWithId]);
 
     useEffect(() => {
         async function fetchAllPokemons() {
@@ -34,14 +49,6 @@ function PokemonSelector(props) {
 
         fetchAllPokemons();
     }, []);
-
-    function findPokemonWithId(id) {
-        return allPokemons.find(p => p.id === id);
-    }
-
-    function findPokemonWithName(name) {
-        return allPokemons.find(p => p.name === name);
-    }
 
     console.log(`PokemonSelector ${selectedPokemon}`);
     console.log({allPokemonIds: allPokemons});
@@ -59,7 +66,7 @@ function PokemonSelector(props) {
                     <Form.Control value={selectedPokemon && selectedPokemon.name} list="pokemon" className="form-select"
                                   onChange={e => setSelectedPokemon(findPokemonWithName(e.target.value))}/>
                     <datalist id="pokemon">
-                        {allPokemons.map(p => <option value={p.name}>{p.name}</option>)}
+                        {allPokemons.map(p => <option value={p.name} key={p.id}>{p.name}</option>)}
                     </datalist>
                 </Col>
                 <Col xs={2}>
@@ -82,7 +89,7 @@ async function fetchOnePokemon(id) {
     const data = await response.json();
     console.log(`---fetch ${id} data `, data.id)
     return {
-        id: data.id,
+        id: String(data.id),
         name: data.name,
         image: data.sprites.other.dream_world.front_default,
         types: data.types.map(t => t.type.name).join(", ")
@@ -114,9 +121,9 @@ function toLocalStorage(shownPokemonIds) {
 }
 
 function App() {
-
     const [shownPokemonIds, setShownPokemonIds] = useState(() => fromLocalStorage());
     const [pokemons, setPokemons] = useState([]);
+    const [clickedPokemon, setClickedPokemon] = useState();
 
     useEffect(() => {
         async function fetchShownPokemons() {
@@ -136,16 +143,14 @@ function App() {
 
     function addPokemon(id) {
         console.log(`add ${id}`);
-        const idNumber = Number(id);
-        if (!shownPokemonIds.includes(idNumber))
-            setShownPokemonIds([...shownPokemonIds, idNumber].sort((a, b) => a - b));
+        if (!shownPokemonIds.includes(id))
+            setShownPokemonIds([...shownPokemonIds, id].sort((a, b) => Number(a) - Number(b)));
     }
 
     function removePokemon(id) {
         console.log(`remove ${id}`);
-        const idNumber = Number(id);
-        if (shownPokemonIds.includes(idNumber))
-            setShownPokemonIds(shownPokemonIds.filter(i => i !== idNumber));
+        if (shownPokemonIds.includes(id))
+            setShownPokemonIds(shownPokemonIds.filter(i => i !== id));
     }
 
     console.log({shownPokemonIds});
@@ -154,12 +159,17 @@ function App() {
     return (<div>
             <Container fluid className="mt-3 mb-3">
                 <h1>My Pokemons</h1>
-                <Row><PokemonSelector addPokemon={addPokemon}
-                                      removePokemon={removePokemon}/></Row>
+                <Row>
+                    <PokemonCompleteList
+                        selectedPokemonId={clickedPokemon && clickedPokemon.id}
+                        addPokemon={addPokemon}
+                        removePokemon={removePokemon}/>
+                </Row>
                 <Row>
                     {shownPokemonIds.map(id => {
                         const pokemon = pokemons.find(p => p.id === id);
-                        return <Pokemon key={id} pokemon={pokemon}/>
+                        return <Pokemon key={id} pokemon={pokemon}
+                                        setSelectedPokemon={() => setClickedPokemon(pokemon)}/>
                     })}
                 </Row>
             </Container></div>
