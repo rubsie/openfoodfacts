@@ -1,6 +1,6 @@
 import {Card, Col} from "react-bootstrap";
 
-export function Pokemon(props) {
+export function PokemonCard(props) {
     const {pokemon, setSelectedPokemon} = props;
 
     if (!pokemon) return null;

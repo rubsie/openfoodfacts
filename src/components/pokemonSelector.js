@@ -8,13 +8,10 @@ export function PokemonSelector(props) {
     const {shownPokemonIds, addPokemon, removePokemon} = useShownPokemonsContext();
     const [allPokemons, setAllPokemons] = useState([]);
     const [selectedPokemon, setSelectedPokemon] = useState();
-    const selectedPokemonIsInShownList = selectedPokemon && shownPokemonIds.find(id => id === selectedPokemon.id);
+    const selectedPokemonIsInShownList = selectedPokemon && shownPokemonIds.includes(selectedPokemon.id);
 
     const findPokemonWithId = useCallback((id) => {
-        const pokemon = allPokemons.find(p => p.id === id);
-        console.log({allPokemons});
-        console.log({pokemon});
-        return pokemon;
+        return allPokemons.find(p => p.id === id);
     }, [allPokemons]);
 
     const findPokemonWithName = useCallback((name) => {
@@ -22,22 +19,23 @@ export function PokemonSelector(props) {
     }, [allPokemons])
 
     useEffect(() => {
-        console.log(`useEffect in PokemonCompleteList ${selectedPokemonId}`);
+        console.log(`useEffect in PokemonSelector: selectedPokemonId is now ${selectedPokemonId}`);
         setSelectedPokemon(findPokemonWithId(selectedPokemonId));
     }, [selectedPokemonId, findPokemonWithId]);
 
     useEffect(() => {
         async function fetchAllPokemons() {
+            console.log(`useEffect in PokemonSelector: init allPokemons`);
             const fetchedData = await fetchAllPokemon();
-            console.log({fetchedData});
+            console.log(`useEffect in PokemonSelector: init allPokemons`, {fetchedData});
             setAllPokemons(fetchedData);
         }
 
         fetchAllPokemons();
     }, []);
 
-    console.log(`PokemonSelector ${selectedPokemon}`);
-    console.log({allPokemonIds: allPokemons});
+    console.log(`PokemonSelector`, {selectedPokemon});
+    console.log({allPokemons});
 
     return <Col>
         <Form className="p-3 bg-white">

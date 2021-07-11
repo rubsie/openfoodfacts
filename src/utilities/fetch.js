@@ -1,14 +1,13 @@
 export async function fetchOnePokemon(id) {
-    console.log(`---fetch ${id} `)
-    const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${id}`);
-    console.log(`---fetch ${id} done`)
-    const data = await response.json();
-    console.log(`---fetch ${id} data `, data.id)
-
     function getImage() {
         return data.sprites.other["official-artwork"].front_default;
     }
 
+    console.log(`---fetch one ${id} `)
+    const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${id}`);
+    console.log(`---fetch one ${id} done`)
+    const data = await response.json();
+    console.log(`---fetch one ${id} done `, {data})
     return {
         id: String(data.id),
         name: data.name,
@@ -27,6 +26,6 @@ export async function fetchAllPokemon() {
     const response = await fetch(`https://pokeapi.co/api/v2/pokemon?limit=-1`);
     console.log(`---fetch all done`)
     const data = await response.json();
-    console.log(`---fetch all data `, {data})
+    console.log(`---fetch all done `, {data})
     return data.results.map(p => ({id: getIdFromUrl(p.url), name: p.name}));
 }
