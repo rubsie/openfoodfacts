@@ -8,6 +8,7 @@ const ShownPokemonsContext = createContext();
 export function ShownPokemonsProvider(props) {
     const [shownPokemonIds, setShownPokemonIds] = useState(() => fromLocalStorage());
     const [shownPokemonsData, setShownPokemonsData] = useState([]);
+    const [clickedPokemon, setClickedPokemon] = useState();
 
     console.log({shownPokemonIds});
     console.log({shownPokemonsData});
@@ -44,15 +45,14 @@ export function ShownPokemonsProvider(props) {
     }, [shownPokemonsData]);
 
     const api = useMemo(() => ({
-            shownPokemonIds,
-            setShownPokemonIds,
-            shownPokemonsData,
-            setShownPokemonsData,
+            shownPokemonIds, setShownPokemonIds,
+            shownPokemonsData, setShownPokemonsData,
+            clickedPokemon, setClickedPokemon,
             getPokemonDataWithId,
             addPokemon,
             removePokemon
         }),
-        [shownPokemonIds, setShownPokemonIds, shownPokemonsData, setShownPokemonsData, getPokemonDataWithId, addPokemon, removePokemon]);
+        [shownPokemonIds, setShownPokemonIds, shownPokemonsData, setShownPokemonsData, clickedPokemon, setClickedPokemon, getPokemonDataWithId, addPokemon, removePokemon]);
 
     return <ShownPokemonsContext.Provider value={api}>
         {props.children}

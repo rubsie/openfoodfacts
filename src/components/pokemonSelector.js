@@ -3,12 +3,11 @@ import {Button, ButtonGroup, Col, Form, Row} from "react-bootstrap";
 import {fetchAllPokemon} from "../utilities/fetch";
 import {useShownPokemonsContext} from "../contexts/shownPokemonsContext";
 
-export function PokemonSelector(props) {
-    const {selectedPokemonId} = props;
-    const {shownPokemonIds, addPokemon, removePokemon} = useShownPokemonsContext();
+export function PokemonSelector() {
+    const {shownPokemonIds, clickedPokemon, addPokemon, removePokemon} = useShownPokemonsContext();
     const [allPokemons, setAllPokemons] = useState([]);
     const [selectedPokemon, setSelectedPokemon] = useState();
-    const selectedPokemonIsInShownList = selectedPokemon && shownPokemonIds.includes(selectedPokemon.id);
+    const selectedPokemonIsInShownList = clickedPokemon && shownPokemonIds.includes(clickedPokemon.id);
 
     const findPokemonWithId = useCallback((id) => {
         return allPokemons.find(p => p.id === id);
@@ -19,9 +18,9 @@ export function PokemonSelector(props) {
     }, [allPokemons])
 
     useEffect(() => {
-        console.log(`useEffect in PokemonSelector: selectedPokemonId is now ${selectedPokemonId}`);
-        setSelectedPokemon(findPokemonWithId(selectedPokemonId));
-    }, [selectedPokemonId, findPokemonWithId]);
+        console.log(`useEffect in PokemonSelector: clickedPokemon.id is now ${clickedPokemon && clickedPokemon.id}`);
+        setSelectedPokemon(findPokemonWithId(clickedPokemon && clickedPokemon.id));
+    }, [clickedPokemon, findPokemonWithId]);
 
     useEffect(() => {
         async function fetchAllPokemons() {
