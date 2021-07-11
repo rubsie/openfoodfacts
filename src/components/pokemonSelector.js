@@ -3,10 +3,9 @@ import {Button, ButtonGroup, Col, Form, Row} from "react-bootstrap";
 import {fetchAllPokemon} from "../utilities/fetch";
 import {useShownPokemonsContext} from "../contexts/shownPokemonsContext";
 
-export function ListAllPokemons(props) {
+export function PokemonSelector(props) {
     const {selectedPokemonId} = props;
     const {shownPokemonIds, addPokemon, removePokemon} = useShownPokemonsContext();
-
     const [allPokemons, setAllPokemons] = useState([]);
     const [selectedPokemon, setSelectedPokemon] = useState();
     const selectedPokemonIsInShownList = selectedPokemon && shownPokemonIds.find(id => id === selectedPokemon.id);
