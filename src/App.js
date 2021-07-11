@@ -1,7 +1,7 @@
 import 'bootstrap/dist/css/bootstrap.css';
 import './App.css';
 import {useEffect, useState} from "react";
-import {Button, ButtonGroup, Card, CardGroup, Col, Container, Form, Row} from "react-bootstrap";
+import {Button, ButtonGroup, Card, Col, Container, Form, Row} from "react-bootstrap";
 
 function Pokemon(props) {
     const {pokemon, setSelectedPokemon} = props;
@@ -53,14 +53,23 @@ async function fetchOnePokemon(id) {
     };
 }
 
+function fromLocalStorage() {
+    return JSON.parse(localStorage.getItem("pokemonIds")) || [];
+}
+
+function toLocalStorage(shownPokemonIds) {
+    localStorage.setItem("pokemonIds", JSON.stringify(shownPokemonIds));
+}
+
 function App() {
-    const [shownPokemonIds, setShownPokemonIds] = useState([202, 203, 205, 206, 207, 208, 209, 210]);
+    const [shownPokemonIds, setShownPokemonIds] = useState(() => fromLocalStorage());
     const [pokemons, setPokemons] = useState([]);
     const [selectedPokemon, setSelectedPokemon] = useState();
 
     useEffect(() => {
         async function fetchPokemon() {
-            const idsToFetch = shownPokemonIds.filter(id => !pokemons.find(p => p.id===id));
+            toLocalStorage(shownPokemonIds);
+            const idsToFetch = shownPokemonIds.filter(id => !pokemons.find(p => p.id === id));
             console.log(`fetchPokemon `, {idsToFetch});
             if (!idsToFetch.length) return;
 
@@ -95,13 +104,13 @@ function App() {
                 <Row><PokemonSelector selectedPokemon={selectedPokemon}
                                       addPokemon={addPokemon}
                                       removePokemon={removePokemon}/></Row>
-                <Row><CardGroup>
+                <Row>
                     {shownPokemonIds.map(id => {
                         const pokemon = pokemons.find(p => p.id === id);
                         return <Pokemon key={id} pokemon={pokemon}
                                         setSelectedPokemon={() => setSelectedPokemon(pokemon)}/>
                     })}
-                </CardGroup></Row>
+                </Row>
             </Container></div>
     );
 }
