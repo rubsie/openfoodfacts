@@ -20,27 +20,40 @@ function Pokemon(props) {
 
 
 function PokemonSelector(props) {
-    const {allPokemonIds, addPokemon, removePokemon} = props;
+    const {addPokemon, removePokemon} = props;
+    const [allPokemonIds, setAllPokemonIds] = useState([]);
     const [id, setId] = useState("");
 
+    useEffect(() => {
+        async function fetchAllPokemons() {
+            const fetchedData = await fetchAllPokemon();
+            console.log({fetchedData});
+            setAllPokemonIds(fetchedData);
+        }
+
+        fetchAllPokemons();
+    }, []);
+
     console.log(`PokemonSelector ${id}`);
+    console.log({allPokemonIds});
+
     return <Col>
         <Form className="p-3 bg-white">
             <Row className="d-flex align-items-end">
-                <Col xs={4}>
-                    <Form.Label>pokemon number: </Form.Label>
+                <Col xs={3}>
+                    <Form.Label>number: </Form.Label>
                     <Form.Control value={id} type="number"
                                   onChange={e => setId(e.target.value)}/>
                 </Col>
-                <Col xs={5}>
-                    <Form.Label>pokemon name: </Form.Label>
+                <Col xs={6}>
+                    <Form.Label>name: </Form.Label>
                     <Form.Control value={id} list="pokemon" className="form-select"
                                   onChange={e => setId(e.target.value)}/>
                     <datalist id="pokemon">
                         {allPokemonIds.map(p => <option value={p.id}>{p.name}</option>)}
                     </datalist>
                 </Col>
-                <Col xs={2} >
+                <Col xs={2}>
                     <ButtonGroup>
                         <Button variant="outline-primary" onClick={() => removePokemon(id)}>-</Button>
                         <Button variant="outline-primary" onClick={() => addPokemon(id)}>+</Button>
@@ -91,7 +104,6 @@ function toLocalStorage(shownPokemonIds) {
 
 function App() {
 
-    const [allPokemonIds, setAllPokemonIds] = useState([]);
     const [shownPokemonIds, setShownPokemonIds] = useState(() => fromLocalStorage());
     const [pokemons, setPokemons] = useState([]);
     const [selectedPokemon, setSelectedPokemon] = useState();
@@ -111,15 +123,6 @@ function App() {
         fetchShownPokemons();
     }, [shownPokemonIds, pokemons]);
 
-    useEffect(() => {
-        async function fetchAllPokemons() {
-            const fetchedData = await fetchAllPokemon();
-            console.log({fetchedData});
-            setAllPokemonIds(fetchedData);
-        }
-
-        fetchAllPokemons();
-    }, []);
 
     function addPokemon(id) {
         console.log(`add ${id}`);
@@ -135,7 +138,6 @@ function App() {
             setShownPokemonIds(shownPokemonIds.filter(i => i !== idNumber));
     }
 
-    console.log({allPokemonIds});
     console.log({shownPokemonIds});
     console.log({pokemons});
     if (!pokemons) return null;
@@ -143,7 +145,6 @@ function App() {
             <Container fluid className="mt-3 mb-3">
                 <h1>My Pokemons</h1>
                 <Row><PokemonSelector selectedPokemon={selectedPokemon}
-                                      allPokemonIds={allPokemonIds}
                                       addPokemon={addPokemon}
                                       removePokemon={removePokemon}/></Row>
                 <Row>
