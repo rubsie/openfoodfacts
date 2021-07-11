@@ -8,8 +8,8 @@ import {ShownPokemonsProvider, useShownPokemonsContext} from "./contexts/shownPo
 
 
 function ProvidedApp() {
-    const {shownPokemonIds, shownPokemonsData} = useShownPokemonsContext();
     const [clickedPokemon, setClickedPokemon] = useState();
+    const {shownPokemonIds, getPokemonDataWithId} = useShownPokemonsContext();
 
     return (<div>
             <Container fluid className="mt-3 mb-3">
@@ -19,7 +19,7 @@ function ProvidedApp() {
                 </Row>
                 <Row>
                     {shownPokemonIds.map(id => {
-                        const pokemon = shownPokemonsData.find(p => p.id === id);
+                        const pokemon = getPokemonDataWithId(id);
                         return <Pokemon key={id} pokemon={pokemon}
                                         setSelectedPokemon={() => setClickedPokemon(pokemon)}/>
                     })}

@@ -39,15 +39,20 @@ export function ShownPokemonsProvider(props) {
             setShownPokemonIds(shownPokemonIds.filter(i => i !== id));
     }, [shownPokemonIds, setShownPokemonIds]);
 
+    const getPokemonDataWithId = useCallback(id => {
+        return shownPokemonsData.find(p => p.id === id);
+    }, [shownPokemonsData]);
+
     const api = useMemo(() => ({
             shownPokemonIds,
             setShownPokemonIds,
             shownPokemonsData,
             setShownPokemonsData,
+            getPokemonDataWithId,
             addPokemon,
             removePokemon
         }),
-        [shownPokemonIds, setShownPokemonIds, shownPokemonsData, setShownPokemonsData, addPokemon, removePokemon]);
+        [shownPokemonIds, setShownPokemonIds, shownPokemonsData, setShownPokemonsData, getPokemonDataWithId, addPokemon, removePokemon]);
 
     return <ShownPokemonsContext.Provider value={api}>
         {props.children}
