@@ -4,7 +4,7 @@ export function PokemonCard(props) {
     const {pokemon, setSelectedPokemon} = props;
 
     if (!pokemon) return null;
-    return <MDBCol sm={4} md={3} className="mt-3" onClick={setSelectedPokemon}>
+    return <MDBCol size={6} sm={4} md={3} xl={2} className="mt-3" onClick={setSelectedPokemon}>
         <MDBCard className="h-100">
             <MDBCardBody className="text-center p-1 mb-3">
                 <MDBCardTitle>{pokemon.id}. {pokemon.name}</MDBCardTitle>
