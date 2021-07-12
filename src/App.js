@@ -1,4 +1,5 @@
 import 'mdb-react-ui-kit/dist/css/mdb.min.css';
+import 'normalize.css';
 import './App.css';
 import {PokemonSelector} from "./components/pokemonSelector";
 import {ShownPokemonsProvider} from "./contexts/shownPokemonsContext";
