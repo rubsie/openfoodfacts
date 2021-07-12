@@ -38,13 +38,13 @@ export function PokemonSelector() {
 
     return <MDBCol>
         <div className="p-3 bg-white shadow-4 rounded-3">
-            <MDBRow className="d-flex align-items-end">
+            <MDBRow>
                 <MDBCol size={3}>
                     <MDBInput label="number" type="number"
                               value={selectedPokemon && selectedPokemon.id}
                               onChange={e => setSelectedPokemon(findPokemonWithId(e.target.value))}/>
                 </MDBCol>
-                <MDBCol size={6}>
+                <MDBCol size={5} sm={6} md={7}>
                     <MDBInput label="name" list="pokemon"
                               value={selectedPokemon && selectedPokemon.name}
                               className="form-select"
@@ -53,8 +53,8 @@ export function PokemonSelector() {
                         {allPokemons.map(p => <option value={p.name} key={p.id}>{p.name}</option>)}
                     </datalist>
                 </MDBCol>
-                <MDBCol size={2}>
-                    <MDBBtnGroup>
+                <MDBCol size={4} sm={3} md={2}>
+                    <MDBBtnGroup className='w-100'>
                         <MDBBtn variant="outline-primary"
                                 disabled={!selectedPokemonIsInShownList}
                                 onClick={() => removePokemon(selectedPokemon && selectedPokemon.id)}>-</MDBBtn>

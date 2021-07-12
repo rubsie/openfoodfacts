@@ -4,6 +4,7 @@ import {PokemonSelector} from "./components/pokemonSelector";
 import {ShownPokemonsProvider} from "./contexts/shownPokemonsContext";
 import {PokemonList} from "./components/PokemonList";
 import {MDBContainer, MDBRow} from "mdb-react-ui-kit";
+import {StarterMessage} from "./components/starterMessage";
 
 
 function ProvidedApp() {
@@ -11,6 +12,7 @@ function ProvidedApp() {
         <h1>My Pokemons</h1>
         <MDBRow> <PokemonSelector/> </MDBRow>
         <MDBRow> <PokemonList/> </MDBRow>
+        <MDBRow> <StarterMessage/> </MDBRow>
     </MDBContainer>;
 }
 
