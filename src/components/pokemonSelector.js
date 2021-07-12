@@ -40,12 +40,12 @@ export function PokemonSelector() {
         <MDBRow className="w-100 m-0">
             <MDBCol size={3}>
                 <MDBInput label="number" type="number"
-                          value={selectedPokemon && selectedPokemon.id}
+                          value={selectedPokemon ? selectedPokemon.id : ""}
                           onChange={e => setSelectedPokemon(findPokemonWithId(e.target.value))}/>
             </MDBCol>
             <MDBCol size={5} sm={6} md={7}>
                 <MDBInput label="name" list="pokemon"
-                          value={selectedPokemon && selectedPokemon.name}
+                          value={selectedPokemon ? selectedPokemon.name : ""}
                           className="form-select"
                           onChange={e => setSelectedPokemon(findPokemonWithName(e.target.value))}/>
                 <datalist id="pokemon">
