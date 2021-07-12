@@ -15,14 +15,22 @@ export function ShownPokemonsProvider(props) {
 
     useEffect(() => {
         async function fetchShownPokemons() {
-            toLocalStorage(shownPokemonIds);
             const idsToFetch = shownPokemonIds.filter(id => !shownPokemonsData.find(p => p.id === id));
-            console.log(`fetchPokemon `, {idsToFetch});
-            if (!idsToFetch.length) return;
-
-            const fetchedData = await Promise.all(idsToFetch.map(id => fetchOnePokemon(id)));
-            console.log({fetchedData});
-            setShownPokemonsData([...shownPokemonsData, ...fetchedData]);
+            if (!idsToFetch.length) {
+                console.log(`fetchShownPokemons nothing to fetch`);
+                toLocalStorage(shownPokemonIds);
+                return;
+            }
+            try {
+                console.log(`fetchShownPokemons `, {idsToFetch});
+                const fetchedData = await Promise.all(idsToFetch.map(id => fetchOnePokemon(id)));
+                console.log({fetchedData});
+                setShownPokemonsData([...shownPokemonsData, ...fetchedData]);
+                toLocalStorage(shownPokemonIds); // do not update in case of an exception
+            } catch (e) {
+                console.log(`fetchShownPokemons exception: restore shownPokemonIds from localStorage`);
+                setShownPokemonIds(fromLocalStorage());
+            }
         }
 
         fetchShownPokemons();
