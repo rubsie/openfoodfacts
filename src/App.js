@@ -1,4 +1,3 @@
-import 'bootstrap/dist/css/bootstrap.css';
 import 'mdb-react-ui-kit/dist/css/mdb.min.css';
 import './App.css';
 import {PokemonSelector} from "./components/pokemonSelector";
