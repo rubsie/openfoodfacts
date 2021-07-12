@@ -36,8 +36,8 @@ export function PokemonSelector() {
     console.log(`PokemonSelector`, {selectedPokemon});
     console.log({allPokemons});
 
-    return <MDBCol>
-        <MDBContainer><MDBRow>
+    return <MDBContainer fluid className="p-0">
+        <MDBRow className="w-100 m-0">
             <MDBCol size={3}>
                 <MDBInput label="number" type="number"
                           value={selectedPokemon && selectedPokemon.id}
@@ -64,7 +64,7 @@ export function PokemonSelector() {
 
                 </MDBBtnGroup>
             </MDBCol>
-            </MDBRow></MDBContainer>
-    </MDBCol>;
+        </MDBRow>
+    </MDBContainer>;
 }
 
