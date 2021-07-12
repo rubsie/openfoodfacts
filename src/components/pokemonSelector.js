@@ -1,7 +1,7 @@
 import {useCallback, useEffect, useState} from "react";
-import {Button, ButtonGroup, Col, Form, Row} from "react-bootstrap";
 import {fetchAllPokemon} from "../utilities/fetch";
 import {useShownPokemonsContext} from "../contexts/shownPokemonsContext";
+import {MDBBtn, MDBBtnGroup, MDBCol, MDBInput, MDBRow} from "mdb-react-ui-kit";
 
 export function PokemonSelector() {
     const {shownPokemonIds, clickedPokemon, addPokemon, removePokemon} = useShownPokemonsContext();
@@ -36,36 +36,37 @@ export function PokemonSelector() {
     console.log(`PokemonSelector`, {selectedPokemon});
     console.log({allPokemons});
 
-    return <Col>
-        <Form className="p-3 bg-white">
-            <Row className="d-flex align-items-end">
-                <Col xs={3}>
-                    <Form.Label>number: </Form.Label>
-                    <Form.Control value={selectedPokemon && selectedPokemon.id} type="number"
-                                  onChange={e => setSelectedPokemon(findPokemonWithId(e.target.value))}/>
-                </Col>
-                <Col xs={6}>
-                    <Form.Label>name: </Form.Label>
-                    <Form.Control value={selectedPokemon && selectedPokemon.name} list="pokemon" className="form-select"
-                                  onChange={e => setSelectedPokemon(findPokemonWithName(e.target.value))}/>
+    return <MDBCol>
+        <div className="p-3 bg-white shadow-4 rounded-3">
+            <MDBRow className="d-flex align-items-end">
+                <MDBCol size={3}>
+                    <MDBInput label="number" type="number"
+                              value={selectedPokemon && selectedPokemon.id}
+                              onChange={e => setSelectedPokemon(findPokemonWithId(e.target.value))}/>
+                </MDBCol>
+                <MDBCol size={6}>
+                    <MDBInput label="name" list="pokemon"
+                              value={selectedPokemon && selectedPokemon.name}
+                              className="form-select"
+                              onChange={e => setSelectedPokemon(findPokemonWithName(e.target.value))}/>
                     <datalist id="pokemon">
                         {allPokemons.map(p => <option value={p.name} key={p.id}>{p.name}</option>)}
                     </datalist>
-                </Col>
-                <Col xs={2}>
-                    <ButtonGroup>
-                        <Button variant="outline-primary"
+                </MDBCol>
+                <MDBCol size={2}>
+                    <MDBBtnGroup>
+                        <MDBBtn variant="outline-primary"
                                 disabled={!selectedPokemonIsInShownList}
-                                onClick={() => removePokemon(selectedPokemon && selectedPokemon.id)}>-</Button>
+                                onClick={() => removePokemon(selectedPokemon && selectedPokemon.id)}>-</MDBBtn>
 
-                        <Button variant="outline-primary"
+                        <MDBBtn variant="outline-primary"
                                 disabled={!!selectedPokemonIsInShownList}
-                                onClick={() => addPokemon(selectedPokemon && selectedPokemon.id)}>+</Button>
+                                onClick={() => addPokemon(selectedPokemon && selectedPokemon.id)}>+</MDBBtn>
 
-                    </ButtonGroup>
-                </Col>
-            </Row>
-        </Form>
-    </Col>;
+                    </MDBBtnGroup>
+                </MDBCol>
+            </MDBRow>
+        </div>
+    </MDBCol>;
 }
 
