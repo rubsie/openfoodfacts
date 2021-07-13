@@ -1,4 +1,4 @@
-import {useCallback, useEffect, useState} from "react";
+import {useEffect, useState} from "react";
 import {fetchAllPokemon} from "../utilities/fetch";
 import {useShownPokemonsContext} from "../contexts/shownPokemonsContext";
 import {MDBBtn, MDBBtnGroup, MDBCol, MDBContainer, MDBInput, MDBRow} from "mdb-react-ui-kit";
@@ -6,21 +6,28 @@ import {MDBBtn, MDBBtnGroup, MDBCol, MDBContainer, MDBInput, MDBRow} from "mdb-r
 export function PokemonSelector() {
     const {shownPokemonIds, clickedPokemon, addPokemon, removePokemon} = useShownPokemonsContext();
     const [allPokemons, setAllPokemons] = useState([]);
-    const [selectedPokemon, setSelectedPokemon] = useState();
+    const [selectedPokemonId, setSelectedPokemonId] = useState("");
+    const [selectedPokemonName, setSelectedPokemonName] = useState("");
     const selectedPokemonIsInShownList = clickedPokemon && shownPokemonIds.includes(clickedPokemon.id);
 
-    const findPokemonWithId = useCallback((id) => {
-        return allPokemons.find(p => p.id === id);
-    }, [allPokemons]);
+    useEffect(() => {
+        console.log(`PokemonSelector - name is changed`, {selectedPokemonName});
+        const pokemonWithName = allPokemons.find(p => p.name === selectedPokemonName);
+        if (pokemonWithName) setSelectedPokemonId(pokemonWithName.id);
+    }, [selectedPokemonName, allPokemons]);
 
-    const findPokemonWithName = useCallback((name) => {
-        return allPokemons.find(p => p.name === name);
-    }, [allPokemons])
+    useEffect(() => {
+        console.log(`PokemonSelector - id is changed`, {selectedPokemonId});
+        const pokemonWithId = allPokemons.find(p => p.id === selectedPokemonId);
+        if (pokemonWithId) setSelectedPokemonName(pokemonWithId.name);
+    }, [selectedPokemonId, allPokemons]);
 
     useEffect(() => {
         console.log(`useEffect in PokemonSelector: clickedPokemon.id is now ${clickedPokemon && clickedPokemon.id}`);
-        setSelectedPokemon(findPokemonWithId(clickedPokemon && clickedPokemon.id));
-    }, [clickedPokemon, findPokemonWithId]);
+        if (!clickedPokemon) return;
+        const pokemonWithId = allPokemons.find(p => p.id === clickedPokemon.id);
+        if (pokemonWithId) setSelectedPokemonName(pokemonWithId.name);
+    }, [clickedPokemon, allPokemons, setSelectedPokemonId]);
 
     useEffect(() => {
         async function fetchAllPokemons() {
@@ -33,21 +40,21 @@ export function PokemonSelector() {
         fetchAllPokemons();
     }, []);
 
-    console.log(`PokemonSelector`, {selectedPokemon});
-    console.log({allPokemons});
+    console.log(`PokemonSelector`, {selectedPokemonId});
+    //console.log({allPokemons});
 
     return <MDBContainer fluid className="p-0">
         <MDBRow className="w-100 m-0">
             <MDBCol size={3}>
                 <MDBInput label="number" type="number"
-                          value={selectedPokemon ? selectedPokemon.id : ""}
-                          onChange={e => setSelectedPokemon(findPokemonWithId(e.target.value))}/>
+                          value={selectedPokemonId}
+                          onChange={e => setSelectedPokemonId(e.target.value)}/>
             </MDBCol>
             <MDBCol size={5} sm={6} md={7}>
                 <MDBInput label="name" list="pokemon"
-                          value={selectedPokemon ? selectedPokemon.name : ""}
+                          value={selectedPokemonName}
                           className="form-select"
-                          onChange={e => setSelectedPokemon(findPokemonWithName(e.target.value))}/>
+                          onChange={e => setSelectedPokemonName(e.target.value)}/>
                 <datalist id="pokemon">
                     {allPokemons.map(p => <option value={p.name} key={p.id}>{p.name}</option>)}
                 </datalist>
@@ -56,11 +63,11 @@ export function PokemonSelector() {
                 <MDBBtnGroup className='w-100'>
                     <MDBBtn variant="outline-primary"
                             disabled={!selectedPokemonIsInShownList}
-                            onClick={() => removePokemon(selectedPokemon && selectedPokemon.id)}>-</MDBBtn>
+                            onClick={() => removePokemon(selectedPokemonId)}>-</MDBBtn>
 
                     <MDBBtn variant="outline-primary"
                             disabled={!!selectedPokemonIsInShownList}
-                            onClick={() => addPokemon(selectedPokemon && selectedPokemon.id)}>+</MDBBtn>
+                            onClick={() => addPokemon(selectedPokemonId)}>+</MDBBtn>
 
                 </MDBBtnGroup>
             </MDBCol>
