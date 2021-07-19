@@ -12,10 +12,6 @@ export function ShownPokemonsProvider(props) {
     console.log({shownPokemon});
 
     useEffect(() => {
-        toLocalStorage(shownPokemon.map(pokemon => pokemon.id));
-    }, [shownPokemon]);
-
-    useEffect(() => {
         async function rehydrate() {
             const ids = fromLocalStorage()
             const pokemon = await Promise.all(ids.map(id => fetchOnePokemon(id)))
@@ -24,6 +20,10 @@ export function ShownPokemonsProvider(props) {
 
         rehydrate()
     }, [setShownPokemon])
+
+    useEffect(() => {
+        toLocalStorage(shownPokemon.map(pokemon => pokemon.id));
+    }, [shownPokemon]);
 
     const addPokemon = useCallback(async id => {
         console.log(`add ${id}`);
@@ -36,7 +36,8 @@ export function ShownPokemonsProvider(props) {
     const removePokemon = useCallback(id => {
         console.log(`remove ${id}`);
         if (shownPokemon.some(pokemon => pokemon.id === id))
-            setShownPokemon(shownPokemon => shownPokemon.filter(i => i !== id));
+            setShownPokemon(shownPokemon => shownPokemon.filter(pokemon => pokemon.id !== id));
+
     }, [shownPokemon, setShownPokemon]);
 
     const findPokemon = useCallback(id => {

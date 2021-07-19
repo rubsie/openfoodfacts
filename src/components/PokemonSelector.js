@@ -27,7 +27,7 @@ export function PokemonSelector() {
     }, [selectedPokemonId, allPokemons]);
 
     useEffect(() => {
-        console.log(`useEffect in PokemonSelector: clickedPokemon.id is now ${selectedPokemon && selectedPokemon.id}`);
+        console.log(`useEffect in PokemonSelector: selectedPokemon.id is now ${selectedPokemon && selectedPokemon.id}`);
         if (!selectedPokemon) return;
         const pokemonWithId = allPokemons.find(p => p.id === selectedPokemon.id);
         if (pokemonWithId) setSelectedPokemonName(pokemonWithId.name);
