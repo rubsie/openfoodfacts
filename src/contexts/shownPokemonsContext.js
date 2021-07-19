@@ -11,13 +11,13 @@ export function ShownPokemonsProvider(props) {
     console.log({shownPokemon});
 
     useEffect(() => {
-        async function rehydrate() {
+        async function hydrate() {
             const ids = fromLocalStorage()
             const pokemon = await Promise.all(ids.map(id => fetchOnePokemon(id)))
             setShownPokemon(pokemon)
         }
 
-        rehydrate()
+        hydrate()
     }, [setShownPokemon])
 
     useEffect(() => {

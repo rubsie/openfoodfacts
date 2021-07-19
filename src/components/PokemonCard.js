@@ -8,9 +8,11 @@ import {
     MDBCardTitle,
     MDBCol
 } from 'mdb-react-ui-kit';
+import {useShownPokemonsContext} from "../contexts/shownPokemonsContext";
 
 export function PokemonCard(props) {
-    const {pokemon, onRemoveClick} = props;
+    const {pokemon} = props;
+    const {removePokemon} = useShownPokemonsContext();
 
     if (!pokemon) return null;
     return <MDBCol size={6} sm={4} md={3} xl={2} className="mt-3">
@@ -25,7 +27,7 @@ export function PokemonCard(props) {
                     className="p-0 p-sm-2 p-md-2 w-100 h-auto"/>
                 <MDBBtnGroup className='w-100'>
                     <MDBBtn variant="outline-primary"
-                            onClick={() => onRemoveClick(pokemon.id)}>Remove</MDBBtn>
+                            onClick={() => removePokemon(pokemon.id)}>Remove</MDBBtn>
                 </MDBBtnGroup>
             </MDBCardBody>
         </MDBCard>
