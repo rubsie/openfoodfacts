@@ -4,7 +4,7 @@ import {useShownPokemonsContext} from "../contexts/shownPokemonsContext";
 import {MDBBtn, MDBBtnGroup, MDBCol, MDBContainer, MDBInput, MDBRow} from "mdb-react-ui-kit";
 
 export function PokemonSelector() {
-    const {shownPokemon, selectedPokemon, addPokemon} = useShownPokemonsContext();
+    const {shownPokemon, addPokemon} = useShownPokemonsContext();
     const [allPokemons, setAllPokemons] = useState([]);
     const [selectedPokemonId, setSelectedPokemonId] = useState("");
     const [selectedPokemonName, setSelectedPokemonName] = useState("");
@@ -25,13 +25,6 @@ export function PokemonSelector() {
         const pokemonWithId = allPokemons.find(p => p.id === selectedPokemonId);
         if (pokemonWithId) setSelectedPokemonName(pokemonWithId.name);
     }, [selectedPokemonId, allPokemons]);
-
-    useEffect(() => {
-        console.log(`useEffect in PokemonSelector: selectedPokemon.id is now ${selectedPokemon && selectedPokemon.id}`);
-        if (!selectedPokemon) return;
-        const pokemonWithId = allPokemons.find(p => p.id === selectedPokemon.id);
-        if (pokemonWithId) setSelectedPokemonName(pokemonWithId.name);
-    }, [selectedPokemon, allPokemons, setSelectedPokemonId]);
 
     useEffect(() => {
         async function fetchAllPokemons() {

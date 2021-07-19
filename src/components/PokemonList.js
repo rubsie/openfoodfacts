@@ -3,7 +3,7 @@ import {PokemonCard} from "./PokemonCard";
 
 export function PokemonList() {
     const {
-        shownPokemon, setSelectedPokemon, removePokemon
+        shownPokemon, removePokemon
     } = useShownPokemonsContext();
 
     return <>
@@ -11,7 +11,6 @@ export function PokemonList() {
             return <PokemonCard
                 key={pokemon.id}
                 pokemon={pokemon}
-                onClick={setSelectedPokemon}
                 onRemoveClick={removePokemon} />
         })}
     </>;

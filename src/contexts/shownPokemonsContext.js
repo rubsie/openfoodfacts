@@ -7,7 +7,6 @@ const ShownPokemonsContext = createContext();
 
 export function ShownPokemonsProvider(props) {
     const [shownPokemon, setShownPokemon] = useState([]);
-    const [selectedPokemon, setSelectedPokemon] = useState();
 
     console.log({shownPokemon});
 
@@ -47,16 +46,12 @@ export function ShownPokemonsProvider(props) {
     const api = useMemo(
         () => ({
             shownPokemon,
-            selectedPokemon,
-            setSelectedPokemon,
             findPokemon,
             addPokemon,
             removePokemon
         }),
         [
             shownPokemon,
-            selectedPokemon,
-            setSelectedPokemon,
             findPokemon,
             addPokemon,
             removePokemon
