@@ -8,10 +8,10 @@ export function PokemonSelector() {
     const [allPokemons, setAllPokemons] = useState([]);
     const [selectedPokemonId, setSelectedPokemonId] = useState("");
     const [selectedPokemonName, setSelectedPokemonName] = useState("");
-    const selectedPokemonIsInShownList = useMemo(() =>
-        selectedPokemon
-        && shownPokemon.some(pokemon => pokemon.id === selectedPokemon.id),
-        [selectedPokemon, shownPokemon]
+    const enableAddButton = useMemo(() =>
+        selectedPokemonId
+        && !shownPokemon.some(pokemon => pokemon.id === selectedPokemonId),
+        [selectedPokemonId, shownPokemon]
     );
 
     useEffect(() => {
@@ -50,18 +50,18 @@ export function PokemonSelector() {
         <MDBRow className="w-100 m-0">
             <MDBCol size={3}>
                 <MDBInput label="number" type="number"
-                    value={selectedPokemonId}
-                    onChange={e => {
-                        const pokemonId = parseInt(e.target.value)
-                        setSelectedPokemonId(pokemonId && pokemonId > 0 ? e.target.value : '')
+                          value={selectedPokemonId}
+                          onChange={e => {
+                              const pokemonId = parseInt(e.target.value)
+                              setSelectedPokemonId(pokemonId && pokemonId > 0 ? e.target.value : '')
 
-                    }} />
+                          }}/>
             </MDBCol>
             <MDBCol size={5} sm={6} md={7}>
                 <MDBInput label="name" list="pokemon"
-                    value={selectedPokemonName}
-                    className="form-select"
-                    onChange={e => setSelectedPokemonName(e.target.value)} />
+                          value={selectedPokemonName}
+                          className="form-select"
+                          onChange={e => setSelectedPokemonName(e.target.value)}/>
                 <datalist id="pokemon">
                     {allPokemons.map(p => <option value={p.name} key={p.id}>{p.name}</option>)}
                 </datalist>
@@ -69,8 +69,8 @@ export function PokemonSelector() {
             <MDBCol size={4} sm={3} md={2}>
                 <MDBBtnGroup className='w-100'>
                     <MDBBtn variant="outline-primary"
-                        disabled={!!selectedPokemonIsInShownList}
-                        onClick={() => addPokemon(selectedPokemonId)}>Add</MDBBtn>
+                            disabled={!enableAddButton}
+                            onClick={() => addPokemon(selectedPokemonId)}>Add</MDBBtn>
                 </MDBBtnGroup>
             </MDBCol>
         </MDBRow>
