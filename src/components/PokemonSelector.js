@@ -1,14 +1,18 @@
-import {useEffect, useState} from "react";
+import {useEffect, useMemo, useState} from "react";
 import {fetchAllPokemon} from "../utilities/fetch";
 import {useShownPokemonsContext} from "../contexts/shownPokemonsContext";
 import {MDBBtn, MDBBtnGroup, MDBCol, MDBContainer, MDBInput, MDBRow} from "mdb-react-ui-kit";
 
 export function PokemonSelector() {
-    const {shownPokemonIds, clickedPokemon, addPokemon} = useShownPokemonsContext();
+    const {shownPokemon, selectedPokemon, addPokemon} = useShownPokemonsContext();
     const [allPokemons, setAllPokemons] = useState([]);
     const [selectedPokemonId, setSelectedPokemonId] = useState("");
     const [selectedPokemonName, setSelectedPokemonName] = useState("");
-    const selectedPokemonIsInShownList = clickedPokemon && shownPokemonIds.includes(clickedPokemon.id);
+    const selectedPokemonIsInShownList = useMemo(() =>
+        selectedPokemon
+        && shownPokemon.some(pokemon => pokemon.id === selectedPokemon.id),
+        [selectedPokemon, shownPokemon]
+    );
 
     useEffect(() => {
         console.log(`PokemonSelector - name is changed`, {selectedPokemonName});
@@ -23,11 +27,11 @@ export function PokemonSelector() {
     }, [selectedPokemonId, allPokemons]);
 
     useEffect(() => {
-        console.log(`useEffect in PokemonSelector: clickedPokemon.id is now ${clickedPokemon && clickedPokemon.id}`);
-        if (!clickedPokemon) return;
-        const pokemonWithId = allPokemons.find(p => p.id === clickedPokemon.id);
+        console.log(`useEffect in PokemonSelector: clickedPokemon.id is now ${selectedPokemon && selectedPokemon.id}`);
+        if (!selectedPokemon) return;
+        const pokemonWithId = allPokemons.find(p => p.id === selectedPokemon.id);
         if (pokemonWithId) setSelectedPokemonName(pokemonWithId.name);
-    }, [clickedPokemon, allPokemons, setSelectedPokemonId]);
+    }, [selectedPokemon, allPokemons, setSelectedPokemonId]);
 
     useEffect(() => {
         async function fetchAllPokemons() {
@@ -49,7 +53,7 @@ export function PokemonSelector() {
                     value={selectedPokemonId}
                     onChange={e => {
                         const pokemonId = parseInt(e.target.value)
-                        setSelectedPokemonId(pokemonId > 0 ? pokemonId : 0)
+                        setSelectedPokemonId(pokemonId && pokemonId > 0 ? e.target.value : '')
 
                     }} />
             </MDBCol>

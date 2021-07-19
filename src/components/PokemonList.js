@@ -1,13 +1,17 @@
 import {useShownPokemonsContext} from "../contexts/shownPokemonsContext";
-import {PokemonCard} from "./pokemonCard";
+import {PokemonCard} from "./PokemonCard";
 
 export function PokemonList() {
-    const {shownPokemonIds, getPokemonDataWithId, setClickedPokemon} = useShownPokemonsContext();
+    const {
+        shownPokemon, setSelectedPokemon
+    } = useShownPokemonsContext();
+
     return <>
-        {shownPokemonIds.map(id => {
-            const pokemon = getPokemonDataWithId(id);
-            return <PokemonCard key={id} pokemon={pokemon}
-                                setSelectedPokemon={() => setClickedPokemon(pokemon)}/>
+        {shownPokemon.map(pokemon => {
+            return <PokemonCard
+                key={pokemon.id}
+                pokemon={pokemon}
+                setSelectedPokemon={() => setSelectedPokemon(pokemon)} />
         })}
     </>;
 }

@@ -9,7 +9,11 @@ export function PokemonCard(props) {
             <MDBCardBody className="text-center p-1 mb-3">
                 <MDBCardTitle>{pokemon.id}. {pokemon.name}</MDBCardTitle>
                 <MDBCardText>Type: {pokemon.types}</MDBCardText>
-            <MDBCardImage src={pokemon.image} alt={pokemon.name} variant="bottom" className="p-0 p-sm-2 p-md-2 w-100 h-auto"/>
+                <MDBCardImage
+                    src={pokemon.image}
+                    alt={pokemon.name}
+                    variant="bottom"
+                    className="p-0 p-sm-2 p-md-2 w-100 h-auto" />
             </MDBCardBody>
         </MDBCard>
     </MDBCol>

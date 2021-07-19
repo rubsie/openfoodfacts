@@ -6,61 +6,61 @@ import {fetchOnePokemon} from "../utilities/fetch";
 const ShownPokemonsContext = createContext();
 
 export function ShownPokemonsProvider(props) {
-    const [shownPokemonIds, setShownPokemonIds] = useState(() => fromLocalStorage());
-    const [shownPokemonsData, setShownPokemonsData] = useState([]);
-    const [clickedPokemon, setClickedPokemon] = useState();
+    const [shownPokemon, setShownPokemon] = useState([]);
+    const [selectedPokemon, setSelectedPokemon] = useState();
 
-    console.log({shownPokemonIds});
-    console.log({shownPokemonsData});
+    console.log({shownPokemon});
 
     useEffect(() => {
-        async function fetchShownPokemons() {
-            const idsToFetch = shownPokemonIds.filter(id => !shownPokemonsData.find(p => p.id === id));
-            if (!idsToFetch.length) {
-                console.log(`fetchShownPokemons nothing to fetch`);
-                toLocalStorage(shownPokemonIds);
-                return;
-            }
-            try {
-                console.log(`fetchShownPokemons `, {idsToFetch});
-                const fetchedData = await Promise.all(idsToFetch.map(id => fetchOnePokemon(id)));
-                console.log({fetchedData});
-                setShownPokemonsData([...shownPokemonsData, ...fetchedData]);
-                toLocalStorage(shownPokemonIds); // do not update in case of an exception
-            } catch (e) {
-                console.log(`fetchShownPokemons exception: restore shownPokemonIds from localStorage`);
-                setShownPokemonIds(fromLocalStorage());
-            }
+        toLocalStorage(shownPokemon.map(pokemon => pokemon.id));
+    }, [shownPokemon]);
+
+    useEffect(() => {
+        async function rehydrate() {
+            const ids = fromLocalStorage()
+            const pokemon = await Promise.all(ids.map(id => fetchOnePokemon(id)))
+            setShownPokemon(pokemon)
         }
 
-        fetchShownPokemons();
-    }, [shownPokemonIds, shownPokemonsData]);
+        rehydrate()
+    }, [setShownPokemon])
 
-    const addPokemon = useCallback(id => {
+    const addPokemon = useCallback(async id => {
         console.log(`add ${id}`);
-        if (!shownPokemonIds.includes(id))
-            setShownPokemonIds([...shownPokemonIds, id].sort((a, b) => Number(a) - Number(b)));
-    }, [shownPokemonIds, setShownPokemonIds]);
+        if (!shownPokemon.some(pokemon => pokemon.id === id)) {
+            const pokemon = await fetchOnePokemon(id)
+            setShownPokemon(shownPokemon => [...shownPokemon, pokemon].sort((a, b) => Number(a) - Number(b)));
+        }
+    }, [shownPokemon, setShownPokemon]);
 
     const removePokemon = useCallback(id => {
         console.log(`remove ${id}`);
-        if (shownPokemonIds.includes(id))
-            setShownPokemonIds(shownPokemonIds.filter(i => i !== id));
-    }, [shownPokemonIds, setShownPokemonIds]);
+        if (shownPokemon.some(pokemon => pokemon.id === id))
+            setShownPokemon(shownPokemon => shownPokemon.filter(i => i !== id));
+    }, [shownPokemon, setShownPokemon]);
 
-    const getPokemonDataWithId = useCallback(id => {
-        return shownPokemonsData.find(p => p.id === id);
-    }, [shownPokemonsData]);
+    const findPokemon = useCallback(id => {
+        return shownPokemon.find(p => p.id === id);
+    }, [shownPokemon]);
 
-    const api = useMemo(() => ({
-            shownPokemonIds, setShownPokemonIds,
-            shownPokemonsData, setShownPokemonsData,
-            clickedPokemon, setClickedPokemon,
-            getPokemonDataWithId,
+    const api = useMemo(
+        () => ({
+            shownPokemon,
+            selectedPokemon,
+            setSelectedPokemon,
+            findPokemon,
             addPokemon,
             removePokemon
         }),
-        [shownPokemonIds, setShownPokemonIds, shownPokemonsData, setShownPokemonsData, clickedPokemon, setClickedPokemon, getPokemonDataWithId, addPokemon, removePokemon]);
+        [
+            shownPokemon,
+            selectedPokemon,
+            setSelectedPokemon,
+            findPokemon,
+            addPokemon,
+            removePokemon
+        ]
+    );
 
     return <ShownPokemonsContext.Provider value={api}>
         {props.children}
