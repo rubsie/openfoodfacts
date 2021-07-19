@@ -1,8 +1,7 @@
+function getImage(data) {
+    return data.sprites.other["official-artwork"].front_default
+}
 export async function fetchOnePokemon(id) {
-    function getImage() {
-        return data.sprites.other["official-artwork"].front_default;
-    }
-
     console.log(`---fetch one ${id} `)
     const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${id}`);
     console.log(`---fetch one ${id} done`)
@@ -11,7 +10,7 @@ export async function fetchOnePokemon(id) {
     return {
         id: String(data.id),
         name: data.name,
-        image: getImage(),
+        image: getImage(data),
         types: data.types.map(t => t.type.name).join(", ")
     };
 }
