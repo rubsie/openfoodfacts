@@ -62,12 +62,11 @@ export function PokemonSelector() {
                 </Col>
                 <Col xs={4} sm={3} md={2} className="p-1">
                     <ButtonGroup className='w-100'>
-                        <Button variant="outline-primary"
+                        <Button variant="primary"
                                 disabled={!enableAddButton}
                                 onClick={() => addPokemon(selectedPokemonId)}>Add</Button>
                     </ButtonGroup>
                 </Col>
-
             </Row>
         </Form>
     </Container>;
